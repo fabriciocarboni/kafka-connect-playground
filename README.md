@@ -99,9 +99,30 @@ Kafkacat is a command-line utility for interacting with Kafka.
 ## **Customizing Connectors**
 To add more connectors, modify the command section in the kafka-connect service in the docker-compose.yml file.
 
-## **Notes**
+# **Notes**
 The Kafka broker is configured to allow large message sizes (up to 200MB).
 The MySQL service uses an initialization script to set up the database.
+
+
+## Example: Creating a JDBC Sink Connector
+To create a JDBC Sink Connector, use the following command:
+```bash
+curl -i -X PUT -H "Accept:application/json" \
+    -H "Content-Type:application/json" http://localhost:8083/connectors/sink-jdbc-mysql-00/config \
+    -d '{
+          "connector.class"     : "io.confluent.connect.jdbc.JdbcSinkConnector",
+          "connection.url"      : "jdbc:mysql://mysql:3306/freetestapi",
+          "connection.user"     : "mysqluser",
+          "connection.password" : "mysqlpw",
+          "topics"              : "freetestapi-books",
+          "tasks.max"           : "4",
+          "auto.create"         : "true",
+          "key.converter"       : "org.apache.kafka.connect.json.JsonConverter",
+          "key.converter.schemas.enable": "false",
+          "value.converter"     : "org.apache.kafka.connect.json.JsonConverter",
+          "value.converter.schemas.enable": "false"
+        }'
+```
 
 ## Cheat sheet for Kafka connect rest APIs
 
@@ -121,3 +142,16 @@ The MySQL service uses an initialization script to set up the database.
 | `curl /connectors/[name]/tasks/[number]/status`                         | Get the status of a single task         |
 | `curl -X POST /connectors/[name]/tasks/[number]/restart`                | Restart a single task                   |
 | `curl /connector-plugins/`                                              | Get list of plugins                     |
+
+## Using kcat examples
+[kcat](https://docs.confluent.io/platform/current/tools/kafkacat-usage.html) (formerly kafkacat) is a command-line utility that you can use to test and debug Apache Kafka® deployments. You can use kcat to produce, consume, and list topic and partition information for Kafka.
+
+- list topics
+  ```bash
+   docker exec kafkacat kcat -b broker:29092 -L | grep topic
+   ```
+
+- Consuming messages from a topic
+  ```bash
+  docker exec kafkacat kcat -b broker:29092 -t freetestapi-books -C -J | jq '.'
+  ```
