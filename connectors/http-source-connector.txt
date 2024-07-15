@@ -1,0 +1,30 @@
+# http source connector
+curl -s -X PUT -H  "Content-Type:application/json" http://localhost:8083/connectors/freetestapi-http-source/config \
+        -d '{
+        "connector.class": "io.confluent.connect.http.HttpSourceConnector",
+        "topic.name.pattern": "freetestapi-${entityName}",
+        "entity.names": "books,dogs",
+        "url": "https://freetestapi.com/api/v1/${entityName}",
+        "request.interval.ms": "60000",
+        "auth.type": "none",
+        "tasks.max": "1",
+        "http.initial.offset": "0",
+        "http.offset.mode": "SIMPLE_INCREMENTING",
+        "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+        "confluent.topic.bootstrap.servers": "broker:9092",
+        "confluent.license": "",
+        "confluent.topic.replication.factor": "1"
+    }'
+
+curl -s localhost:8083/connectors
+curl -s localhost:8083/connectors/freetestapi-http-source/status |jq
+
+curl -X DELETE localhost:8083/connectors/freetestapi-http-source
+
+
+# list topics
+docker exec kafkacat kcat -b broker:29092 -L | grep topic
+
+# consume
+docker exec kafkacat kcat -b broker:29092 -t freetestapi-books -C -J | jq '.'

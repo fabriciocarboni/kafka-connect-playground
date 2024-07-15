@@ -1,0 +1,27 @@
+curl -i -X PUT -H "Accept:application/json" \
+    -H  "Content-Type:application/json" http://localhost:8083/connectors/sink-jdbc-mysql-00/config \
+    -d '{
+          "connector.class"     : "io.confluent.connect.jdbc.JdbcSinkConnector",
+          "connection.url"      : "jdbc:mysql://mysql:3306/freetestapi",
+          "connection.user"     : "mysqluser",
+          "connection.password" : "mysqlpw",
+          "topics"              : "freetestapi-books",
+          "tasks.max"           : "1",
+          "auto.create"         : "true",
+          "key.converter"       : "org.apache.kafka.connect.json.JsonConverter",
+          "key.converter.schemas.enable": "false",
+          "value.converter"     : "org.apache.kafka.connect.json.JsonConverter",
+          "value.converter.schemas.enable": "false"
+        }'
+
+curl -s localhost:8083/connectors
+curl -s localhost:8083/connectors/sink-jdbc-mysql-00/status |jq
+
+curl -X DELETE localhost:8083/connectors/sink-jdbc-mysql-00
+
+
+# list topics
+docker exec kafkacat kcat -b broker:29092 -L | grep topic
+
+# consume
+docker exec kafkacat kcat -b broker:29092 -t freetestapi-books -C -J | jq '.'
