@@ -82,12 +82,12 @@ Kafkacat is a command-line utility for interacting with Kafka.
    docker compose up -d
 
 3. **Access phpMyAdmin**:
-- **URL:**  http://localhost:8080
-- **Username:** mysqluser
-- **Password:** mysqlpw
+    - **URL:**  http://localhost:8080
+    - **Username:** mysqluser
+    - **Password:** mysqlpw
 
 4. **Access Kafka Connect:**
-- **URL: http://localhost:8083
+    - **URL:** http://localhost:8083
 
 ## **Kafka Connectors**
 
