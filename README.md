@@ -99,11 +99,6 @@ Kafkacat is a command-line utility for interacting with Kafka.
 ## **Customizing Connectors**
 To add more connectors, modify the command section in the kafka-connect service in the docker-compose.yml file.
 
-# **Notes**
-The Kafka broker is configured to allow large message sizes (up to 200MB).
-The MySQL service uses an initialization script to set up the database.
-
-
 ## Example: Creating a JDBC Sink Connector
 To create a JDBC Sink Connector, use the following command:
 ```bash
@@ -155,3 +150,7 @@ curl -i -X PUT -H "Accept:application/json" \
   ```bash
   docker exec kafkacat kcat -b broker:29092 -t freetestapi-books -C -J | jq '.'
   ```
+
+## **Notes**
+The Kafka broker is configured to allow large message sizes (up to 200MB).
+The MySQL service uses an initialization script to set up the database.
